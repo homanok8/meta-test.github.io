@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="ko">
+   <head>
+      <meta charset="UTF-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <meta property="og:image" content="https://example.com/ogp.jpg" />
+<meta property="og:image:secure_url" content="https://secure.example.com/ogp.jpg" />
+<meta property="og:image:type" content="image/jpeg" />
+<meta property="og:image:width" content="400" />
+<meta property="og:image:height" content="300" />
+<meta property="og:image:alt" content="A shiny red apple with a bite taken out" />
+      <title>Document</title>
+      <link rel="stylesheet" href="css/common.css" />
+      <link rel="stylesheet" href="css/page_new.css" />
+      <script src="js/jquery-1.11.2.min.js"></script>
+      <script>
+         $(function() {
+            var navTop = $('#ntnav').offset();
+            var recoTop = $('#ntnav').offset();
+            var newTop = $('#new').offset();
+            var noticeTop = $('#notice').offset();
+
+            $(window).scroll(function() {
+               var windowTop = $(window).scrollTop() + 155;
+               if(windowTop > navTop.top) {
+                  $('#ntnav').stop().addClass('fixed');
+               } else {
+                  $('#ntnav').stop().removeClass('fixed');
+               }
+
+               if (windowTop > recoTop.top) {
+                  $('.ntnav__link').stop().removeClass('active');
+                  $('.ntnav__item').eq(0).find('a').stop().addClass('active');
+               }
+               if (windowTop > newTop.top) {
+                  $('.ntnav__link').stop().removeClass('active');
+                  $('.ntnav__item').eq(1).find('a').stop().addClass('active');
+               }
+               if (windowTop > noticeTop.top) {
+                  $('.ntnav__link').stop().removeClass('active');
+                  $('.ntnav__item').eq(2).find('a').stop().addClass('active');
+               }
+            });
+
+            $('.ntnav__link').click(function() {
+               var ct = $(this).parent().index();
+               var moveTop = $('.ntc').find('section').eq(ct).offset().top - 60;
+               console.log(moveTop);
+               $('html').animate({scrollTop: moveTop});
+            });
+
+            // 배너 슬라이드
+            var bannerCount = 0;
+            var bannerSize = $('.banner__item').length - 1;
+            var bannerTimer = null;
+            
+            $('.banner__item').eq(0).stop().fadeIn();
+            $('.banner__item').eq(0).find('span').stop().slideDown();
+            
+            function bannerStart() {
+               bannerTimer = setInterval(function() {
+                  if (bannerCount < bannerSize) {
+                     bannerCount++;
+                  } else {
+                     bannerCount = 0;
+                  }
+                  $('.banner__item span').stop().slideUp();
+                  $('.banner__item').stop().fadeOut();
+                  $('.banner__item').eq(bannerCount).stop().fadeIn();
+                  $('.banner__item').eq(bannerCount).find('span').stop().slideDown();
+               }, 5000);
+            }
+            function bannerStop() {
+               clearInterval(bannerTimer);
+               bannerTimer = null;
+            }
+            bannerStart();
+            
+            // $('.banner__btbx').hover(function(){
+            //    bannerStop();
+            // }, function(){
+            //    bannerStart();
+            // });
+            
+            $('#bannerNext').click(function() {
+               if (bannerCount < bannerSize) {
+                  bannerCount++;
+               } else {
+                  bannerCount = 0;
+               }
+               $('.banner__item span').stop().slideUp();
+               $('.banner__item').stop().fadeOut();
+               $('.banner__item').eq(bannerCount).stop().fadeIn();
+               $('.banner__item').eq(bannerCount).find('span').stop().slideDown();
+            });
+            $('#bannerPrev').click(function() {
+               if (bannerCount > 0) {
+                  bannerCount--;
+               } else {
+                  bannerCount = bannerSize;
+               }
+               $('.banner__item span').stop().slideUp();
+               $('.banner__item').stop().fadeOut();
+               $('.banner__item').eq(bannerCount).stop().fadeIn();
+               $('.banner__item').eq(bannerCount).find('span').stop().slideDown();
+            });
+
+            $('#bannerPlay').click(function() {
+               $(this).stop().toggleClass('active');
+
+               if ($(this).hasClass('active')) {
+                  bannerStop();
+               } else {
+                  bannerStart();
+               }
+            });
+
+            var eventCount = 0;
+            var eventSize = $('.news__evt-item').length - 1;
+            var eventLength = $('.news__evt-item').length;
+            var eventTimer = null;
+            $('.news__count em').text(eventLength < 10 ? '/0' + eventLength : '/' + eventLength);
+
+            $('#newsNext').click(function() {
+               var elWidth = $('.news__evt-list').width();
+               if (eventCount < eventSize) {
+                  eventCount++;
+                  $('.news__evt-item').eq(eventCount - 1).css({'left': 0});
+                  $('.news__evt-item').eq(eventCount).css({'left': 100 + '%'});
+                  $('.news__evt-item').eq(eventCount - 1).animate({'left': -1 * elWidth + 'px'});
+                  $('.news__evt-item').eq(eventCount).animate({'left': 0});
+                  
+               } else {
+                  eventCount = 0;
+                  $('.news__evt-item').eq(eventSize).css({'left': 0});
+                  $('.news__evt-item').eq(eventCount).css({'left': 100 + '%'});
+                  $('.news__evt-item').eq(eventSize).animate({'left': -1 * elWidth + 'px'});
+                  $('.news__evt-item').eq(eventCount).animate({'left': 0});
+               }
+               $('.news__count b').text(eventCount + 1 < 10 ? '0' + (eventCount + 1) : eventCount + 1);
+            });
+            $('#newsPrev').click(function() {
+               var elWidth = $('.news__evt-list').width();
+               if (eventCount > 0) {
+                  eventCount--;
+                  $('.news__evt-item').eq(eventCount + 1).css({'left': 0});
+                  $('.news__evt-item').eq(eventCount).css({'left': -1 * elWidth + 'px'});
+                  $('.news__evt-item').eq(eventCount + 1).animate({'left': 100 + '%'});
+                  $('.news__evt-item').eq(eventCount).animate({'left': 0});
+               } else {
+                  eventCount = eventSize;
+                  $('.news__evt-item').eq(0).css({'left': 0});
+                  $('.news__evt-item').eq(eventCount).css({'left': -1 * elWidth + 'px'});
+                  $('.news__evt-item').eq(0).animate({'left': 100 + '%'});
+                  $('.news__evt-item').eq(eventCount).animate({'left': 0});
+               }
+               $('.news__count b').text(eventCount + 1 < 10 ? '0' + (eventCount + 1) : eventCount + 1);
+            });
+
+            // function eventStart() {
+            //    eventTimer = setInterval(function() {
+            //       $('#newsNext').stop().trigger('click');
+            //    }, 5000);
+            // }
+            // function eventStop() {
+            //    clearInterval(eventStart);
+            //    eventTimer = null;
+            // }
+            // eventStart();
+
+         });
+      </script>
+   </head>
+   <body>
+      <div id="wrap">
+         <!-- header start -->
+         <script>
+            $(function () {
+               $(window).scroll(function () {
+                  if ($(window).scrollTop() > 0) {
+                     $("#header").stop().addClass("scroll");
+                  } else {
+                     $("#header").stop().removeClass("scroll");
+                  }
+               });
+            });
+         </script>
+         <header class="header" id="header">
+            <div class="header__inner">
+               <h1 class="logo">
+                  <a href="#" class="logo__link">일이음</a>
+               </h1>
+               <button type="button" class="header__mbtn">
+                  <div class="header__mbtn-box">
+                     <i></i>
+                     <i></i>
+                     <i></i>
+                  </div>
+               </button>
+            </div>
+         </header>
+         <!-- //header end -->
+
+         
+
+         <main id="main" class="intro">
+            <article class="banner">
+               <ul class="banner__list">
+                  <li class="banner__item">
+                     <img src="images/2023/intro-bg.png" />
+                     <span>기업과 나를 잇는 플랫폼<br /><b>일이음</b>입니다.</span>
+                  </li>
+                  <li class="banner__item">
+                     <img src="images/2023/main01.png" />
+                     <span>기업과 나를 잇는 플랫폼<br /><b>일이음</b>입니다.</span>
+                  </li>
+                  <li class="banner__item">
+                     <img src="images/2023/main03.png" />
+                     <span>기업과 나를 잇는 플랫폼<br /><b>일이음</b>입니다.</span>
+                  </li>
+               </ul>
+               <div class="banner__btbx">
+                  <button type="button" class="banner__btn banner__btn--prev" id="bannerPrev">
+                     <img src="images/2023/icons/arrow-wt_icon.png" />
+                  </button>
+                  <button type="button" class="banner__play" id="bannerPlay">
+                     <span></span>
+                  </button>
+                  <button type="button" class="banner__btn banner__btn--next" id="bannerNext">
+                     <img src="images/2023/icons/arrow-wt_icon.png" />
+                  </button>
+               </div>
+            </article>
+
+            <nav class="ntnav" id="ntnav">
+               <ul class="ntnav__list">
+                  <li class="ntnav__item">
+                     <a href="#" class="ntnav__link active">추천공고</a>
+                  </li>
+                  <li class="ntnav__item">
+                     <a href="#" class="ntnav__link">신규공고</a>
+                  </li>
+                  <li class="ntnav__item">
+                     <a href="#" class="ntnav__link">공지사항</a>
+                  </li>
+               </ul>
+            </nav>
+
+            <article class="ntc">
+               <section class="ntc__reco" id="reco">
+                  <div class="ntc__inner">
+                     <h3 class="ntc__tit">추천공고</h3>
+                     <p class="ntc__desc">일이음에서 선별한 추천공고</p>
+                     <ul class="ntc__list">
+                        <li class="ntc__item">
+                           <a href="#" class="ntc__link">
+                              <div class="ntc__imbx">
+                                 <img src="images/2023/support/support01.png" />
+                              </div>
+                              <strong class="ntc__name">㈜신세계아이앤씨</strong>
+                              <span class="ntc__con">정보보안 SW 개발업</span>
+                              <span class="ntc__date">D-3</span>
+                           </a>
+                           <input type="checkbox" id="attn01" class="ntc__checkbox">
+                           <label class="ntc__heart" for="attn01">
+                              <svg clip-rule="evenodd" fill-rule="evenodd" stroke-linejoin="round" stroke-miterlimit="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="m12 5.72c-2.624-4.517-10-3.198-10 2.461 0 3.725 4.345 7.727 9.303 12.54.194.189.446.283.697.283s.503-.094.697-.283c4.977-4.831 9.303-8.814 9.303-12.54 0-5.678-7.396-6.944-10-2.461z" fill-rule="nonzero"/></svg>
+                           </label>
+                        </li>
+                        <li class="ntc__item">
+                           <a href="#" class="ntc__link">
+                              <div class="ntc__imbx">
+                                 <img src="images/2023/support/support01.png" />
+                              </div>
+                              <strong class="ntc__name">㈜농심</strong>
+                              <span class="ntc__con">정보보안 SW 개발업</span>
+                              <span class="ntc__date ntc__date--red">마감임박</span>
+                           </a>
+                           <input type="checkbox" id="attn02" class="ntc__checkbox">
+                           <label class="ntc__heart" for="attn02">
+                              <svg clip-rule="evenodd" fill-rule="evenodd" stroke-linejoin="round" stroke-miterlimit="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="m12 5.72c-2.624-4.517-10-3.198-10 2.461 0 3.725 4.345 7.727 9.303 12.54.194.189.446.283.697.283s.503-.094.697-.283c4.977-4.831 9.303-8.814 9.303-12.54 0-5.678-7.396-6.944-10-2.461z" fill-rule="nonzero"/></svg>
+                           </label>
+                        </li>
+                        <li class="ntc__item">
+                           <a href="#" class="ntc__link">
+                              <div class="ntc__imbx">
+                                 <img src="images/2023/support/support01.png" />
+                              </div>
+                              <strong class="ntc__name">GS네트웍스</strong>
+                              <span class="ntc__con">반도체, 디스플레이 장비 전원장치 제조업</span>
+                              <span class="ntc__date">상시채용</span>
+                           </a>
+                           <input type="checkbox" id="attn03" class="ntc__checkbox">
+                           <label class="ntc__heart" for="attn03">
+                              <svg clip-rule="evenodd" fill-rule="evenodd" stroke-linejoin="round" stroke-miterlimit="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="m12 5.72c-2.624-4.517-10-3.198-10 2.461 0 3.725 4.345 7.727 9.303 12.54.194.189.446.283.697.283s.503-.094.697-.283c4.977-4.831 9.303-8.814 9.303-12.54 0-5.678-7.396-6.944-10-2.461z" fill-rule="nonzero"/></svg>
+                           </label>
+                        </li>
+                        <li class="ntc__item">
+                           <a href="#" class="ntc__link">
+                              <div class="ntc__imbx">
+                                 <img src="images/2023/support/support01.png" />
+                              </div>
+                              <strong class="ntc__name">㈜한샘</strong>
+                              <span class="ntc__con">생활용 가구 도매업</span>
+                              <span class="ntc__date">상시채용</span>
+                           </a>
+                           <input type="checkbox" id="attn04" class="ntc__checkbox">
+                           <label class="ntc__heart" for="attn04">
+                              <svg clip-rule="evenodd" fill-rule="evenodd" stroke-linejoin="round" stroke-miterlimit="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="m12 5.72c-2.624-4.517-10-3.198-10 2.461 0 3.725 4.345 7.727 9.303 12.54.194.189.446.283.697.283s.503-.094.697-.283c4.977-4.831 9.303-8.814 9.303-12.54 0-5.678-7.396-6.944-10-2.461z" fill-rule="nonzero"/></svg>
+                           </label>
+                        </li>
+                        <li class="ntc__item">
+                           <a href="#" class="ntc__link">
+                              <div class="ntc__imbx">
+                                 <img src="images/2023/support/support01.png" />
+                              </div>
+                              <strong class="ntc__name">㈜NH농협무역</strong>
+                              <span class="ntc__con">정보보안 SW 개발업</span>
+                              <span class="ntc__date">D-30</span>
+                           </a>
+                           <input type="checkbox" id="attn05" class="ntc__checkbox">
+                           <label class="ntc__heart" for="attn05">
+                              <svg clip-rule="evenodd" fill-rule="evenodd" stroke-linejoin="round" stroke-miterlimit="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="m12 5.72c-2.624-4.517-10-3.198-10 2.461 0 3.725 4.345 7.727 9.303 12.54.194.189.446.283.697.283s.503-.094.697-.283c4.977-4.831 9.303-8.814 9.303-12.54 0-5.678-7.396-6.944-10-2.461z" fill-rule="nonzero"/></svg>
+                           </label>
+                        </li>
+                        <li class="ntc__item">
+                           <a href="#" class="ntc__link">
+                              <div class="ntc__imbx">
+                                 <img src="images/2023/support/support01.png" />
+                              </div>
+                              <strong class="ntc__name">㈜삼양홀딩스</strong>
+                              <span class="ntc__con">정보보안 SW 개발업</span>
+                              <span class="ntc__date">D-30</span>
+                           </a>
+                           <input type="checkbox" id="attn06" class="ntc__checkbox">
+                           <label class="ntc__heart" for="attn06">
+                              <svg clip-rule="evenodd" fill-rule="evenodd" stroke-linejoin="round" stroke-miterlimit="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="m12 5.72c-2.624-4.517-10-3.198-10 2.461 0 3.725 4.345 7.727 9.303 12.54.194.189.446.283.697.283s.503-.094.697-.283c4.977-4.831 9.303-8.814 9.303-12.54 0-5.678-7.396-6.944-10-2.461z" fill-rule="nonzero"/></svg>
+                           </label>
+                        </li>
+                        <li class="ntc__user">
+                           <figure class="ntc__fig">
+                              <img src="images/2023/info01.png" alt="" />
+                              <figcaption class="ntc__cap">
+                                 <span>김이름님, 환영합니다.</span>
+                                 <a href="#">로그아웃</a>
+                              </figcaption>
+                           </figure>
+                           <div class="ntc__file">
+                              <div class="ntc__rsm">
+                                 <span class="ntc__head">이력서</span>
+                                 <span class="ntc__filename">파일명</span>
+                              </div>
+                              <button type="button" class="ntc__rsm-btn">이력서 수정하기</button>
+                           </div>
+                           <div class="ntc__state">
+                              <strong class="ntc__subti">채용 현황</strong>
+                              <ul class="ntc__sublist">
+                                 <li class="ntc__subitem">
+                                    <a href="#" class="ntc__sublink">
+                                       <div class="ntc__box">
+                                          <img src="images/2023/icons/phone_icon.png" alt="" />
+                                          <span>입사 제안</span>
+                                       </div>
+                                    </a>
+                                 </li>
+                                 <li class="ntc__subitem">
+                                    <a href="#" class="ntc__sublink">
+                                       <div class="ntc__box">
+                                          <img src="images/2023/icons/phone_icon.png" alt="" />
+                                          <span>입사 지원</span>
+                                       </div>
+                                    </a>
+                                 </li>
+                                 <li class="ntc__subitem">
+                                    <a href="#" class="ntc__sublink">
+                                       <div class="ntc__box">
+                                          <img src="images/2023/icons/phone_icon.png" alt="" />
+                                          <span>찜한 기업</span>
+                                       </div>
+                                    </a>
+                                 </li>
+                              </ul>
+                           </div>
+                        </li>
+                     </ul>
+                  </div>
+               </section>
+
+               <section class="ntc__new" id="new">
+                  <div class="ntc__inner">
+                     <h3 class="ntc__tit">신규공고</h3>
+                     <ul class="ntc__list">
+                        <li class="ntc__item">
+                           <a href="#" class="ntc__link">
+                              <div class="ntc__imbx">
+                                 <img src="images/2023/support/support01.png" />
+                              </div>
+                              <strong class="ntc__name">한국산업은행</strong>
+                              <span class="ntc__con">정보보안 SW 개발업</span>
+                              <span class="ntc__date">D-3</span>
+                           </a>
+                           <input type="checkbox" id="attn07" class="ntc__checkbox">
+                           <label class="ntc__heart" for="attn07">
+                              <svg clip-rule="evenodd" fill-rule="evenodd" stroke-linejoin="round" stroke-miterlimit="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="m12 5.72c-2.624-4.517-10-3.198-10 2.461 0 3.725 4.345 7.727 9.303 12.54.194.189.446.283.697.283s.503-.094.697-.283c4.977-4.831 9.303-8.814 9.303-12.54 0-5.678-7.396-6.944-10-2.461z" fill-rule="nonzero"/></svg>
+                           </label>
+                        </li>
+                        <li class="ntc__item">
+                           <a href="#" class="ntc__link">
+                              <div class="ntc__imbx">
+                                 <img src="images/2023/support/support01.png" />
+                              </div>
+                              <strong class="ntc__name">㈜한샘</strong>
+                              <span class="ntc__con">생활용 가구 도매업</span>
+                              <span class="ntc__date">상시채용</span>
+                           </a>
+                           <input type="checkbox" id="attn08" class="ntc__checkbox">
+                           <label class="ntc__heart" for="attn08">
+                              <svg clip-rule="evenodd" fill-rule="evenodd" stroke-linejoin="round" stroke-miterlimit="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="m12 5.72c-2.624-4.517-10-3.198-10 2.461 0 3.725 4.345 7.727 9.303 12.54.194.189.446.283.697.283s.503-.094.697-.283c4.977-4.831 9.303-8.814 9.303-12.54 0-5.678-7.396-6.944-10-2.461z" fill-rule="nonzero"/></svg>
+                           </label>
+                        </li>
+                        <li class="ntc__item">
+                           <a href="#" class="ntc__link">
+                              <div class="ntc__imbx">
+                                 <img src="images/2023/support/support01.png" />
+                              </div>
+                              <strong class="ntc__name">㈜NH농협무역</strong>
+                              <span class="ntc__con">정보보안 SW 개발업</span>
+                              <span class="ntc__date">D-30</span>
+                           </a>
+                           <input type="checkbox" id="attn09" class="ntc__checkbox">
+                           <label class="ntc__heart" for="attn09">
+                              <svg clip-rule="evenodd" fill-rule="evenodd" stroke-linejoin="round" stroke-miterlimit="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="m12 5.72c-2.624-4.517-10-3.198-10 2.461 0 3.725 4.345 7.727 9.303 12.54.194.189.446.283.697.283s.503-.094.697-.283c4.977-4.831 9.303-8.814 9.303-12.54 0-5.678-7.396-6.944-10-2.461z" fill-rule="nonzero"/></svg>
+                           </label>
+                        </li>
+                        <li class="ntc__item">
+                           <a href="#" class="ntc__link">
+                              <div class="ntc__imbx">
+                                 <img src="images/2023/support/support01.png" />
+                              </div>
+                              <strong class="ntc__name">㈜삼양홀딩스</strong>
+                              <span class="ntc__con">정보보안 SW 개발업</span>
+                              <span class="ntc__date">D-30</span>
+                           </a>
+                           <input type="checkbox" id="attn10" class="ntc__checkbox">
+                           <label class="ntc__heart" for="attn10">
+                              <svg clip-rule="evenodd" fill-rule="evenodd" stroke-linejoin="round" stroke-miterlimit="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="m12 5.72c-2.624-4.517-10-3.198-10 2.461 0 3.725 4.345 7.727 9.303 12.54.194.189.446.283.697.283s.503-.094.697-.283c4.977-4.831 9.303-8.814 9.303-12.54 0-5.678-7.396-6.944-10-2.461z" fill-rule="nonzero"/></svg>
+                           </label>
+                        </li>
+                        <li class="ntc__item">
+                           <a href="#" class="ntc__link">
+                              <div class="ntc__imbx">
+                                 <img src="images/2023/support/support01.png" />
+                              </div>
+                              <strong class="ntc__name">GS네트웍스</strong>
+                              <span class="ntc__con">반도체, 디스플레이 장비 전원장치 제조업</span>
+                              <span class="ntc__date">상시채용</span>
+                           </a>
+                           <input type="checkbox" id="attn11" class="ntc__checkbox">
+                           <label class="ntc__heart" for="attn11">
+                              <svg clip-rule="evenodd" fill-rule="evenodd" stroke-linejoin="round" stroke-miterlimit="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="m12 5.72c-2.624-4.517-10-3.198-10 2.461 0 3.725 4.345 7.727 9.303 12.54.194.189.446.283.697.283s.503-.094.697-.283c4.977-4.831 9.303-8.814 9.303-12.54 0-5.678-7.396-6.944-10-2.461z" fill-rule="nonzero"/></svg>
+                           </label>
+                        </li>
+                        <li class="ntc__item">
+                           <a href="#" class="ntc__link">
+                              <div class="ntc__imbx">
+                                 <img src="images/2023/support/support01.png" />
+                              </div>
+                              <strong class="ntc__name">텔레칩스</strong>
+                              <span class="ntc__con">반도체, 디스플레이 장비 전원장치 제조업</span>
+                              <span class="ntc__date">상시채용</span>
+                           </a>
+                           <input type="checkbox" id="attn12" class="ntc__checkbox">
+                           <label class="ntc__heart" for="attn12">
+                              <svg clip-rule="evenodd" fill-rule="evenodd" stroke-linejoin="round" stroke-miterlimit="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="m12 5.72c-2.624-4.517-10-3.198-10 2.461 0 3.725 4.345 7.727 9.303 12.54.194.189.446.283.697.283s.503-.094.697-.283c4.977-4.831 9.303-8.814 9.303-12.54 0-5.678-7.396-6.944-10-2.461z" fill-rule="nonzero"/></svg>
+                           </label>
+                        </li>
+                        <li class="ntc__item">
+                           <a href="#" class="ntc__link">
+                              <div class="ntc__imbx">
+                                 <img src="images/2023/support/support01.png" />
+                              </div>
+                              <strong class="ntc__name">㈜유비케어</strong>
+                              <span class="ntc__con">반도체, 디스플레이 장비 전원장치 제조업</span>
+                              <span class="ntc__date">상시채용</span>
+                           </a>
+                           <input type="checkbox" id="attn13" class="ntc__checkbox">
+                           <label class="ntc__heart" for="attn13">
+                              <svg clip-rule="evenodd" fill-rule="evenodd" stroke-linejoin="round" stroke-miterlimit="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="m12 5.72c-2.624-4.517-10-3.198-10 2.461 0 3.725 4.345 7.727 9.303 12.54.194.189.446.283.697.283s.503-.094.697-.283c4.977-4.831 9.303-8.814 9.303-12.54 0-5.678-7.396-6.944-10-2.461z" fill-rule="nonzero"/></svg>
+                           </label>
+                        </li>
+                        <li class="ntc__item">
+                           <a href="#" class="ntc__link">
+                              <div class="ntc__imbx">
+                                 <img src="images/2023/support/support01.png" />
+                              </div>
+                              <strong class="ntc__name">㈜농심</strong>
+                              <span class="ntc__con">정보보안 SW 개발업</span>
+                              <span class="ntc__date ntc__date--red">마감임박</span>
+                           </a>
+                           <input type="checkbox" id="attn14" class="ntc__checkbox">
+                           <label class="ntc__heart" for="attn14">
+                              <svg clip-rule="evenodd" fill-rule="evenodd" stroke-linejoin="round" stroke-miterlimit="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="m12 5.72c-2.624-4.517-10-3.198-10 2.461 0 3.725 4.345 7.727 9.303 12.54.194.189.446.283.697.283s.503-.094.697-.283c4.977-4.831 9.303-8.814 9.303-12.54 0-5.678-7.396-6.944-10-2.461z" fill-rule="nonzero"/></svg>
+                           </label>
+                        </li>
+                     </ul>
+                  </div>
+               </section>
+
+               <section class="news" id="notice">
+                  <div class="ntc__inner">
+                     <div class="news__flex">
+                        <div class="news__ntc">
+                           <h3 class="news__tit">
+                              <span class="news__tit-txt">공지사항</span>
+                              <a href="#" class="new__more">더보기</a>
+                           </h3>
+                           <ul class="news__list">
+                              <li class="news__item">
+                                 <a href="#" class="news__link">
+                                    <span class="news__con">2023 산업현장 여성R&D인력 채용박람회 행사장 배치도</span>
+                                    <span class="news__date">2023.00.00</span>
+                                 </a>
+                              </li>
+                              <li class="news__item">
+                                 <a href="#" class="news__link">
+                                    <span class="news__con">2023 산업현장 여성R&D인력 채용박람회</span>
+                                    <span class="news__date">2023.00.00</span>
+                                 </a>
+                              </li>
+                              <li class="news__item">
+                                 <a href="#" class="news__link">
+                                    <span class="news__con">2023 산업현장 여성R&D인력 채용박람회 행사장 배치도</span>
+                                    <span class="news__date">2023.00.00</span>
+                                 </a>
+                              </li>
+                              <li class="news__item">
+                                 <a href="#" class="news__link">
+                                    <span class="news__con">2023 산업현장 여성R&D인력 행사개요</span>
+                                    <span class="news__date">2023.00.00</span>
+                                 </a>
+                              </li>
+                              <li class="news__item">
+                                 <a href="#" class="news__link">
+                                    <span class="news__con">2023 산업현장 여성R&D인력 행사개요</span>
+                                    <span class="news__date">2023.00.00</span>
+                                 </a>
+                              </li>
+                           </ul>
+                        </div>
+                        <div class="news__evt">
+                           <h3 class="news__tit">
+                              <span class="news__tit-txt">이벤트</span>
+                              <div class="news__btbx">
+                                 <button type="button" class="news__btn news__btn--prev" id="newsPrev">
+                                    <img src="images/2023/icons/arrow_icon.png" alt="">
+                                 </button>
+                                 <span class="news__count">
+                                    <b>01</b>
+                                    <em>/04</em>
+                                 </span>
+                                 <button type="button" class="news__btn news__btn--next" id="newsNext">
+                                    <img src="images/2023/icons/arrow_icon.png" alt="">
+                                 </button>
+                              </div>
+                           </h3>
+                           <div class="news__box">
+                              <ul class="news__evt-list">
+                                 <li class="news__evt-item">
+                                    <a href="#" class="news__evt-link">
+                                       <img src="images/2023/main01.png" alt="">
+                                    </a>
+                                 </li>
+                                 <li class="news__evt-item">
+                                    <a href="#" class="news__evt-link">
+                                       <img src="images/2023/main03.png" alt="">
+                                    </a>
+                                 </li>
+                                 <li class="news__evt-item">
+                                    <a href="#" class="news__evt-link">
+                                       <img src="images/2023/main01.png" alt="">
+                                    </a>
+                                 </li>
+                                 <li class="news__evt-item">
+                                    <a href="#" class="news__evt-link">
+                                       <img src="images/2023/intro-bg.png" alt="">
+                                    </a>
+                                 </li>
+                              </ul>
+                           </div>
+                        </div>
+                     </div>
+                  </div>
+               </section>
+            </article>
+         </main>
+
+         <footer id="footer" class="footer">
+            <div class="footer__inner">
+               <h1 class="footer__logo">
+                  <a href="#">
+                     <img src="images/2023/footer-logo.png" alt="" />
+                  </a>
+               </h1>
+               <ul class="footer__list">
+                  <li class="footer__item">
+                     <strong>주소</strong>
+                     <span>서울특별시 중구 중림로 49 (중림동 128-104)</span>
+                  </li>
+                  <li class="footer__item">
+                     <strong>회사명</strong>
+                     <span>한국여성공학기술인협회</span>
+                  </li>
+                  <li class="footer__item">
+                     <strong>대표</strong>
+                     <span>성 미영</span>
+                  </li>
+                  <li class="footer__item">
+                     <strong>Tel</strong>
+                     <span>02-2186-9996</span>
+                  </li>
+                  <li class="footer__copy">
+                     COPYRIGHT (C)2020 한국여성공학기술인협회. All Rights
+                     Reserved.
+                  </li>
+               </ul>
+            </div>
+         </footer>
+      </div>
+   </body>
+</html>
+
